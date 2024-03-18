@@ -18,16 +18,21 @@
         <PackageReference Include="NUnit" Version="3.13.3" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
         <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
-        <PackageReference Include="coverlet.collector" Version="3.1.2" />
         <PackageReference Include="ReportGenerator" Version="5.2.3" />
+        <PackageReference Include="coverlet.collector" Version="3.1.2" />
+        <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Examples\Examples.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="TestResults\" />
-    </ItemGroup>
-
+    <Target Name="Coverlet">
+        <!-- set security on binaries-->
+        <Exec Command="dotnet test /p:CollectCoverage=true /p:CoverletOutput=coverage/data/coverage /p:CoverletOutputFormat=cobertura"/>
+        <Exec Command="dotnet reportgenerator -reports:coverage/data/coverage.cobertura.xml -targetdir:coverage/report"/>
+    </Target>
 </Project>
