@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
-        <RootNamespace>TestExamples</RootNamespace>
+        <RootNamespace>Gilded_rose.Test</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Examples\Examples.csproj" />
+      <ProjectReference Include="..\Portfolio\Portfolio.csproj" />
     </ItemGroup>
 
     <Target Name="Coverlet">
@@ -30,4 +30,5 @@
         <Exec Command="dotnet test /p:CollectCoverage=true /p:CoverletOutput=coverage/data/coverage /p:CoverletOutputFormat=cobertura"/>
         <Exec Command="dotnet reportgenerator -reports:coverage/data/coverage.cobertura.xml -targetdir:coverage/report"/>
     </Target>
+
 </Project>
