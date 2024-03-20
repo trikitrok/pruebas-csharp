@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace Gilded_rose.Test
+namespace Portfolio.Test
 {
     public class PortfolioTest
     {

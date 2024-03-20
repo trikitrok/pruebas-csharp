@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.IO;
 
-namespace Gilded_rose
+namespace Portfolio
 {
     public class Portfolio
     {

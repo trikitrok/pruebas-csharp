@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-namespace Gilded_rose;
+namespace Portfolio;
 
 public class Asset
 {
