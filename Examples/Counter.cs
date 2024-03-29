@@ -284,3 +284,252 @@ internal interface ITransactionsRepository
 internal class Transaction
 {
 }
+
+public class RegisterSale
+{
+    private List<Item> _items;
+    
+    public RegisterSale()
+    {
+        _items = new List<Item>();
+    }
+    public void AddItem(Barcode code)
+    {
+        var newItem = Inventory.GetInstance().GetItemForBarCode(code);
+        _items.Add(newItem);
+    }
+    
+    // more code...
+}
+
+public class RegisterSaleAfterExtractMethod
+{
+    private List<Item> _items;
+
+    public RegisterSaleAfterExtractMethod()
+    {
+        _items = new List<Item>();
+    }
+
+    public void AddItem(Barcode code)
+    {
+        var newItem = GetInventory().GetItemForBarCode(code);
+        _items.Add(newItem);
+    }
+
+    private static Inventory GetInventory()
+    {
+        return Inventory.GetInstance();
+    }
+
+    // more code...
+}
+
+public class RegisterSaleAfterSubclassAndOverride
+{
+    private List<Item> _items;
+
+    public RegisterSaleAfterSubclassAndOverride()
+    {
+        _items = new List<Item>();
+    }
+
+    public void AddItem(Barcode code)
+    {
+        var newItem = GetInventory().GetItemForBarCode(code);
+        _items.Add(newItem);
+    }
+
+    protected virtual Inventory GetInventory()
+    {
+        return Inventory.GetInstance();
+    }
+
+    // more code...
+}
+
+
+public class Inventory
+{
+    private static Inventory? _instance;
+    private Inventory()
+    {
+        // do somethings
+    }
+
+    public static Inventory GetInstance()
+    {
+        if (_instance == null)
+        {
+            _instance = new Inventory();
+        }
+        return _instance;
+    }
+    
+    public Item GetItemForBarCode(Barcode code)
+    {
+       // getting the item somehow
+       return new Item();
+    }
+}
+
+public class Barcode
+{
+}
+
+public class Item
+{
+   
+}
+
+public class MessageRouter
+{
+    public void Route(Message message)
+    {
+        ExternalRouter.GetInstance().sendMessage(message);
+    }
+}
+
+public class ExternalRouter
+{
+    private static ExternalRouter? _instance;
+
+    private ExternalRouter()
+    {
+        // initialize stuff
+    }
+
+    public static ExternalRouter GetInstance()
+    {
+        if (_instance == null)
+        {
+            _instance = new ExternalRouter();
+        }
+        return _instance;
+    }
+    
+    // more code...
+    public void sendMessage(Message message)
+    {
+       // interesting code to send the message
+    }
+}
+
+
+public class Message
+{
+}
+
+public class ExternalRouterAfterIntroducingSetter
+{
+    private static ExternalRouterAfterIntroducingSetter? _instance;
+
+    private ExternalRouterAfterIntroducingSetter()
+    {
+        // initialize stuff
+    }
+
+    public static ExternalRouterAfterIntroducingSetter GetInstance()
+    {
+        if (_instance == null)
+        {
+            _instance = new ExternalRouterAfterIntroducingSetter();
+        }
+        return _instance;
+    }
+
+    // Added for testing purposes only, do not use this in production code
+    public static void SetInstanceForTesting(ExternalRouterAfterIntroducingSetter? instance)
+    {
+        _instance = instance;
+    }
+    
+    // more code...
+}
+
+
+class BankingServices
+{
+    public static void UpdateAccountBalance(int userId, Money amount)
+    {
+        // some code to update the account balance
+    }
+    
+    // more methods...
+}
+
+public class User
+{
+    private int _id;
+    public User(int id)
+    {
+        _id = id;
+    }
+
+    // more code...
+    
+    public void UpdateBalance(Money amount)
+    {
+        BankingServices.UpdateAccountBalance(_id, amount);
+    }
+    
+    // more code...
+}
+
+public class BankingServicesAlternative
+{
+    public static void UpdateAccountBalance(int userId, Money amount)
+    {
+        new BankingServicesAlternative().UpdateBalance();
+    }
+
+    public void UpdateBalance()
+    {
+        // some code to update the account balance
+    }
+
+    // more methods...
+}
+
+public class BankingServices1
+{
+    public static void UpdateAccountBalance(int userId, Money amount)
+    {
+        // some code to update the account balance
+    }
+    
+    public void UpdateBalance(int userId, Money amount)
+    {
+        UpdateAccountBalance(userId, amount);
+    }
+    
+    // more methods...
+}
+
+public class User1
+{
+    private int _id;
+    public User1(int id)
+    {
+        _id = id;
+    }
+
+    // more code...
+    
+    public void UpdateBalance(Money amount, BankingServices1 bankingServices)
+    {
+        bankingServices.UpdateBalance(_id, amount);
+    }
+    
+    // more code...
+}
+
+public class Money
+{
+    private readonly int _amount;
+
+    public Money(int amount)
+    {
+        _amount = amount;
+    }
+}
