@@ -113,3 +113,144 @@ public class User2
     
     // more code...
 }
+
+public class RSCWorkflow
+{
+    private static int MAX_LENGTH = 200;
+    
+    //... more code
+    
+    public static void Validate(Packet packet)
+    {
+        if (packet.GetOriginator() == "MIA" 
+            || packet.GetLength() > MAX_LENGTH
+            || !packet.HasValidCheckSum())
+        {
+            throw new InvalidFlowException();
+        }
+        //... more code that does not use instance data or methods    
+    }
+    
+    //... more code
+}
+
+public class InvalidFlowException : Exception
+{
+}
+
+public class Packet
+{
+    public string GetOriginator()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetLength()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool HasValidCheckSum()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class GDIBrush
+{
+    private int _colorId;
+    
+    // A long method
+    public void Draw(List<Point> renderingRoots,
+        ColorMatrix colors,
+        List<Point> selection)
+    {
+        // some more code in the method
+        foreach (var point in renderingRoots)
+        {
+            // a lot more code in the loop
+            DrawPoint(point.X, point.Y, colors.GetColor(_colorId));
+        }
+        
+        // a lot more code in the method
+    }
+
+    private void DrawPoint(int x, int y, Color color)
+    {
+        
+    }
+}
+
+public interface PointRenderer
+{
+    int ColorId { get; }
+    void DrawPoint(int x, int y, Color color);
+}
+
+public class GDIBrush1 : PointRenderer
+{
+    public int ColorId { get; }
+
+    // A long method
+    public void Draw(List<Point> renderingRoots,
+        ColorMatrix colors,
+        List<Point> selection)
+    {
+        new Renderer(this, renderingRoots, colors, selection).Draw();
+    }
+
+    public void DrawPoint(int x, int y, Color color)
+    {
+        
+    }
+}
+
+public class Renderer
+{
+    private readonly PointRenderer _pointRenderer;
+    private readonly List<Point> _renderingRoots;
+    private readonly ColorMatrix _colors;
+    private readonly List<Point> _selection;
+
+    public Renderer(PointRenderer pointRenderer, List<Point> 
+        renderingRoots, 
+        ColorMatrix colors, 
+        List<Point> selection)
+    {
+        _pointRenderer = pointRenderer;
+        _renderingRoots = renderingRoots;
+        _colors = colors;
+        _selection = selection;
+        throw new NotImplementedException();
+    }
+
+    public void Draw()
+    {
+        // some more code in the method
+        foreach (var point in _renderingRoots)
+        {
+            // a lot more code in the loop
+            _pointRenderer.DrawPoint(point.X, point.Y, _colors.GetColor(_pointRenderer.ColorId));
+        }
+        
+        // a lot more code in the method
+    }
+}
+
+public class Color
+{
+}
+
+public class ColorMatrix
+{
+    public Color GetColor(int colorId)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Point
+{
+    public int Y { get; set; }
+    public int X { get; }
+}
