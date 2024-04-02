@@ -1,7 +1,11 @@
-﻿namespace Examples;
+﻿using static Examples.ClientBuilder;
+
+namespace Examples;
 
 public class Counter
 {
+    Client _client = SomeClient().WithAge(5).WithHeight(50).Build();
+    
     public static int CountClumps(int[]? nums)
     {
         if (nums == null || nums.Length == 0)
@@ -531,5 +535,92 @@ public class Money
     public Money(int amount)
     {
         _amount = amount;
+    }
+}
+
+class ClientBuilder 
+{
+    private int _age;
+    private float _height;
+
+    private ClientBuilder() 
+    {
+    }
+
+    public static ClientBuilder SomeClient()
+    {
+        return new ClientBuilder();
+    }
+
+    public ClientBuilder WithAge(int age)
+    {
+        _age = age;
+        return this;
+    }
+
+
+    public ClientBuilder WithHeight(float height) 
+    {
+        _height = height;
+        return this;
+    }
+
+    public Client Build() {
+        return new Client(_age, _height);
+    }
+}
+
+// In some client
+class SomeBuilderClient 
+{ 
+    
+    
+    public void SomeMethod() 
+    {
+        SomeClient().WithAge(5).WithHeight(50).Build();
+        // a.b().c().d() 
+        // Is this a Message Chain smell?
+
+    }
+}
+
+
+internal class Client
+{
+    private int _age;
+    private float _height;
+
+    public Client(int age, float height)
+    {
+        _age = age;
+        _height = height;
+    }
+}
+
+class Child 
+{
+    private int _age;
+    
+    public static Child MakeBaby()
+    {
+        return new Child(0);
+    }
+
+    private Child(int age) 
+    {
+        if (age >= 4)
+        {
+            throw new Exception("Not a child!");
+        }
+        _age = age;
+    }
+
+    int GetAge()
+    {
+        return _age;
+    }
+  
+    void SetAge(int age) {
+        _age = age;
     }
 }
