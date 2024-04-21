@@ -624,3 +624,117 @@ class Child
         _age = age;
     }
 }
+
+public class Library {
+    private StreamWriter _writer;
+
+    public Library(StreamWriter writer) {
+        _writer = writer;
+    }
+
+    public void PrintBooks(List<Book> books) 
+    {
+        using (var reader = new StreamReader(new BufferedStream(Console.OpenStandardInput())))
+        {
+            var libraryName = reader.ReadLine();
+            _writer.WriteLine(libraryName);
+            foreach (var book in books)
+            {
+                _writer.WriteLine(book.GetName());
+            }
+        }
+    }
+}
+
+public class Book
+{
+    private string _name;
+
+    public Book(string name)
+    {
+        _name = name;
+    }
+
+    public string GetName()
+    {
+        return _name;
+    }
+}
+
+public class LibraryAfter {
+    private StreamWriter _writer;
+
+    public LibraryAfter(StreamWriter writer) {
+        _writer = writer;
+    }
+
+    public void PrintBooks(List<Book> books, StreamReader streamReader)
+    {
+        using var reader = streamReader;
+        var libraryName = reader.ReadLine();
+        _writer.WriteLine(libraryName);
+        foreach (var book in books)
+        {
+            _writer.WriteLine(book.GetName());
+        }
+    }
+}
+
+public class LibraryAdaptParameter {
+    private StreamWriter _writer;
+
+    public LibraryAdaptParameter(StreamWriter writer) {
+        _writer = writer;
+    }
+
+    public void PrintBooks(List<Book> books, StreamReader streamReader)
+    {
+        using var reader = streamReader;
+        var libraryName = reader.ReadLine();
+        _writer.WriteLine(libraryName);
+        foreach (var book in books)
+        {
+            _writer.WriteLine(book.GetName());
+        }
+    }
+}
+
+public class LibraryAdaptParameter2 {
+    private StreamWriter _writer;
+
+    public LibraryAdaptParameter2(StreamWriter writer) {
+        _writer = writer;
+    }
+
+    public void PrintBooks(List<Book> books, LibraryData libraryData)
+    {
+        var libraryName = libraryData.GetLibraryName();
+        _writer.WriteLine(libraryName);
+        foreach (var book in books)
+        {
+            _writer.WriteLine(book.GetName());
+        }
+    }
+}
+
+public interface LibraryData
+{
+    string? GetLibraryName();
+}
+
+public class StreamReaderLibraryData : LibraryData
+{
+    private readonly StreamReader _streamReader;
+
+    public StreamReaderLibraryData(StreamReader streamReader)
+    {
+        _streamReader = streamReader;
+    }
+
+    public string? GetLibraryName()
+    {
+        using var reader = _streamReader;
+        var libraryName = reader.ReadLine();
+        return libraryName;
+    }
+}
