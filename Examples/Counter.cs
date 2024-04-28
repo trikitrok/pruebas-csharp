@@ -541,6 +541,11 @@ public class Money
     {
         _amount = amount;
     }
+
+    public void Add(Money money)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 class ClientBuilder
@@ -1040,5 +1045,150 @@ public class Element
     public string GetText()
     {
         return _text;
+    }
+}
+
+public class Invoice
+{
+    private OurDate _billingDate;
+    private OurDate _openingDate;
+    private Originator _originator;
+    
+    ///...
+    public Money GetValue() {
+        Money total = ItemsSum();
+        if (_billingDate.After(OurDate.YearEnd(_openingDate))) {
+            if (_originator.GetState().Equals("FL") ||
+            _originator.GetState().Equals("NY"))
+            total.Add(GetLocalShipping());
+            else
+            total.Add(GetDefaultShipping());
+        }
+        else
+            total.Add(GetSpanningShipping());
+        total.Add(GetTax());
+        return total;
+    }
+
+    private Money GetTax()
+    {
+        throw new NotImplementedException();
+    }
+
+    private Money GetSpanningShipping()
+    {
+        throw new NotImplementedException();
+    }
+
+    private Money GetDefaultShipping()
+    {
+        throw new NotImplementedException();
+    }
+
+    private Money GetLocalShipping()
+    {
+        throw new NotImplementedException();
+    }
+
+    private Money ItemsSum()
+    {
+        throw new NotImplementedException();
+    }
+    //...
+}
+
+public class Originator
+{
+    public string GetState()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class OurDate
+{
+    public bool After(OurDate date)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static OurDate YearEnd(object date)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class Invoice1
+{
+    private readonly ShippingPricer _shippingPricer;
+
+    public Invoice1(OurDate billingDate, OurDate openingDate, Originator originator)
+    {
+        /// ...
+        _shippingPricer = new ShippingPricer(billingDate, openingDate, originator);
+    }
+
+    ///...
+    public Money GetValue() {
+        Money total = ItemsSum();
+        total.Add(_shippingPricer.GetPrice());
+        total.Add(GetTax());
+        return total;
+    }
+
+    private Money GetTax()
+    {
+        throw new NotImplementedException();
+    }
+
+    private Money ItemsSum()
+    {
+        throw new NotImplementedException();
+    }
+    //...
+}
+
+public class ShippingPricer
+{
+    private OurDate _billingDate;
+    private OurDate _openingDate;
+    private Originator _originator;
+
+    public ShippingPricer(OurDate billingDate, OurDate openingDate, Originator originator)
+    {
+        _billingDate = billingDate;
+        _openingDate = openingDate;
+        _originator = originator;
+    }
+
+    public Money GetPrice()
+    {
+        if (_billingDate.After(OurDate.YearEnd(_openingDate)))
+        {
+            if (_originator.GetState().Equals("FL") ||
+                _originator.GetState().Equals("NY"))
+            {
+                return GetLocalShipping();
+            }
+
+            return GetDefaultShipping();
+        }
+
+        return GetSpanningShipping();
+    }
+
+    private Money GetSpanningShipping()
+    {
+        throw new NotImplementedException();
+    }
+
+    private Money GetDefaultShipping()
+    {
+        throw new NotImplementedException();
+    }
+
+    private Money GetLocalShipping()
+    {
+        throw new NotImplementedException();
     }
 }
