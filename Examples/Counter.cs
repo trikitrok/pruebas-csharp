@@ -1,18 +1,16 @@
-﻿using System.Collections;
+﻿using System.Globalization;
+using System.Text;
 using static Examples.ClientBuilder;
 
 namespace Examples;
 
 public class Counter
 {
-    Client _client = SomeClient().WithAge(5).WithHeight(50).Build();
+    private Client _client = SomeClient().WithAge(5).WithHeight(50).Build();
 
     public static int CountClumps(int[]? nums)
     {
-        if (nums == null || nums.Length == 0)
-        {
-            return 0;
-        }
+        if (nums == null || nums.Length == 0) return 0;
 
         var count = 0;
         var prev = nums[0];
@@ -40,20 +38,17 @@ public class Counter
     }
 }
 
-class TestRunner
+internal class TestRunner
 {
-    private List<TestCase> testCases = new();
+    private readonly List<TestCase> testCases = new();
 
-    void Run()
+    private void Run()
     {
-        foreach (TestCase testCase in testCases)
-        {
-            testCase.Run(new TestResult());
-        }
+        foreach (var testCase in testCases) testCase.Run(new TestResult());
     }
 }
 
-class TestCase
+internal class TestCase
 {
     public void Run(TestResult result)
     {
@@ -84,7 +79,7 @@ class TestCase
     }
 }
 
-class TestResult
+internal class TestResult
 {
     private bool _wasRun;
 
@@ -103,7 +98,7 @@ class TestResult
     }
 }
 
-class PaydayTransaction
+internal class PaydayTransaction
 {
     private readonly IPayRollRepository _payRollRepository;
     private readonly ITransactionRecorder _transactionRecorder;
@@ -115,7 +110,7 @@ class PaydayTransaction
         _transactionRecorder = transactionRecorder;
     }
 
-    void Run()
+    private void Run()
     {
         // does important stuff, like paying the employees :)
         // ...
@@ -129,7 +124,7 @@ internal interface ITransactionRecorder
     void SaveTransaction(PaydayTransaction paydayTransaction);
 }
 
-class TransactionLog : ITransactionRecorder
+internal class TransactionLog : ITransactionRecorder
 {
     public void SaveTransaction(PaydayTransaction paydayTransaction)
     {
@@ -137,14 +132,14 @@ class TransactionLog : ITransactionRecorder
     }
 }
 
-interface IPayRollRepository
+internal interface IPayRollRepository
 {
 }
 
-class Account
+internal class Account
 {
-    private int _balance;
     private readonly AcmeLogger _log;
+    private int _balance;
 
     public Account(int balance)
     {
@@ -164,7 +159,7 @@ class Account
     }
 }
 
-class AcmeLogger
+internal class AcmeLogger
 {
     public void LogTransaction(DateTime now, int i)
     {
@@ -172,10 +167,10 @@ class AcmeLogger
     }
 }
 
-class AccountAfterSubclassAndOverride
+internal class AccountAfterSubclassAndOverride
 {
-    private int _balance;
     private readonly AcmeLogger _log;
+    private int _balance;
 
     public AccountAfterSubclassAndOverride(int balance)
     {
@@ -195,13 +190,13 @@ class AccountAfterSubclassAndOverride
     }
 }
 
-class AccountAfterSubclassAndOverrideForTesting : AccountAfterSubclassAndOverride
+internal class AccountAfterSubclassAndOverrideForTesting : AccountAfterSubclassAndOverride
 {
     public List<int> _loggedWithdrawals;
 
     public AccountAfterSubclassAndOverrideForTesting(int balance) : base(balance)
     {
-        _loggedWithdrawals = new();
+        _loggedWithdrawals = new List<int>();
     }
 
     protected override void LogWithdraw(int value)
@@ -211,10 +206,10 @@ class AccountAfterSubclassAndOverrideForTesting : AccountAfterSubclassAndOverrid
     }
 }
 
-class AccountBeforeExtractMethod
+internal class AccountBeforeExtractMethod
 {
-    private int _balance;
     private readonly AcmeLogger _log;
+    private int _balance;
 
     public AccountBeforeExtractMethod(int balance)
     {
@@ -229,7 +224,7 @@ class AccountBeforeExtractMethod
     }
 }
 
-class AccountDoingNastyThingsInConstructor
+internal class AccountDoingNastyThingsInConstructor
 {
     private readonly List<Transaction> _transactions;
 
@@ -240,7 +235,7 @@ class AccountDoingNastyThingsInConstructor
     }
 }
 
-class AccountAfterExtractAndOverrideFactoryMethod
+internal class AccountAfterExtractAndOverrideFactoryMethod
 {
     private List<Transaction> _transactions;
 
@@ -255,13 +250,20 @@ class AccountAfterExtractAndOverrideFactoryMethod
     }
 }
 
-class ForTestingAccountAfterExtractAndOverrideFactoryMethod : AccountAfterExtractAndOverrideFactoryMethod
+internal class ForTestingAccountAfterExtractAndOverrideFactoryMethod : AccountAfterExtractAndOverrideFactoryMethod
 {
-    private readonly List<Transaction> _transactions;
+    private static List<Transaction> _transactions;
 
-    public ForTestingAccountAfterExtractAndOverrideFactoryMethod(List<Transaction> transactions)
+    private ForTestingAccountAfterExtractAndOverrideFactoryMethod()
     {
-        _transactions = transactions;
+    }
+
+    public static AccountAfterExtractAndOverrideFactoryMethod Create(List<Transaction> someTransactions)
+    {
+        // The field transactions and its initialization need to be static 
+        // so that the field gets initialized before the super class constructor is called
+        _transactions = someTransactions;
+        return new ForTestingAccountAfterExtractAndOverrideFactoryMethod();
     }
 
     protected override List<Transaction> GetAllTransactions()
@@ -274,7 +276,7 @@ internal class FileTransactionsRepository : ITransactionsRepository
 {
     public List<Transaction> GetAll()
     {
-        List<Transaction> transactions = new List<Transaction>();
+        var transactions = new List<Transaction>();
 
         // read the transactions from some file...
 
@@ -293,7 +295,7 @@ internal class Transaction
 
 public class RegisterSale
 {
-    private List<Item> _items;
+    private readonly List<Item> _items;
 
     public RegisterSale()
     {
@@ -311,7 +313,7 @@ public class RegisterSale
 
 public class RegisterSaleAfterExtractMethod
 {
-    private List<Item> _items;
+    private readonly List<Item> _items;
 
     public RegisterSaleAfterExtractMethod()
     {
@@ -334,7 +336,7 @@ public class RegisterSaleAfterExtractMethod
 
 public class RegisterSaleAfterSubclassAndOverride
 {
-    private List<Item> _items;
+    private readonly List<Item> _items;
 
     public RegisterSaleAfterSubclassAndOverride()
     {
@@ -347,7 +349,7 @@ public class RegisterSaleAfterSubclassAndOverride
         _items.Add(newItem);
     }
 
-    protected virtual Inventory GetInventory()
+    protected virtual IInventory GetInventory()
     {
         return Inventory.GetInstance();
     }
@@ -355,29 +357,31 @@ public class RegisterSaleAfterSubclassAndOverride
     // more code...
 }
 
-public class Inventory
+public interface IInventory
+{
+    Item GetItemForBarCode(Barcode code);
+}
+
+public class Inventory : IInventory
 {
     private static Inventory? _instance;
 
     private Inventory()
     {
-        // do somethings
-    }
-
-    public static Inventory GetInstance()
-    {
-        if (_instance == null)
-        {
-            _instance = new Inventory();
-        }
-
-        return _instance;
+        // do something
     }
 
     public Item GetItemForBarCode(Barcode code)
     {
         // getting the item somehow
         return new Item();
+    }
+
+    public static Inventory GetInstance()
+    {
+        if (_instance == null) _instance = new Inventory();
+
+        return _instance;
     }
 }
 
@@ -408,10 +412,7 @@ public class ExternalRouter
 
     public static ExternalRouter GetInstance()
     {
-        if (_instance == null)
-        {
-            _instance = new ExternalRouter();
-        }
+        if (_instance == null) _instance = new ExternalRouter();
 
         return _instance;
     }
@@ -438,10 +439,7 @@ public class ExternalRouterAfterIntroducingSetter
 
     public static ExternalRouterAfterIntroducingSetter GetInstance()
     {
-        if (_instance == null)
-        {
-            _instance = new ExternalRouterAfterIntroducingSetter();
-        }
+        if (_instance == null) _instance = new ExternalRouterAfterIntroducingSetter();
 
         return _instance;
     }
@@ -455,7 +453,7 @@ public class ExternalRouterAfterIntroducingSetter
     // more code...
 }
 
-class BankingServices
+internal class BankingServices
 {
     public static void UpdateAccountBalance(int userId, Money amount)
     {
@@ -467,7 +465,7 @@ class BankingServices
 
 public class User
 {
-    private int _id;
+    private readonly int _id;
 
     public User(int id)
     {
@@ -516,7 +514,7 @@ public class BankingServices1
 
 public class User1
 {
-    private int _id;
+    private readonly int _id;
 
     public User1(int id)
     {
@@ -548,7 +546,7 @@ public class Money
     }
 }
 
-class ClientBuilder
+internal class ClientBuilder
 {
     private int _age;
     private float _height;
@@ -582,7 +580,7 @@ class ClientBuilder
 }
 
 // In some client
-class SomeBuilderClient
+internal class SomeBuilderClient
 {
     public void SomeMethod()
     {
@@ -604,31 +602,28 @@ internal class Client
     }
 }
 
-class Child
+internal class Child
 {
     private int _age;
+
+    private Child(int age)
+    {
+        if (age >= 4) throw new Exception("Not a child!");
+
+        _age = age;
+    }
 
     public static Child MakeBaby()
     {
         return new Child(0);
     }
 
-    private Child(int age)
-    {
-        if (age >= 4)
-        {
-            throw new Exception("Not a child!");
-        }
-
-        _age = age;
-    }
-
-    int GetAge()
+    private int GetAge()
     {
         return _age;
     }
 
-    void SetAge(int age)
+    private void SetAge(int age)
     {
         _age = age;
     }
@@ -636,7 +631,7 @@ class Child
 
 public class Library
 {
-    private StreamWriter _writer;
+    private readonly StreamWriter _writer;
 
     public Library(StreamWriter writer)
     {
@@ -649,17 +644,14 @@ public class Library
         {
             var libraryName = reader.ReadLine();
             _writer.WriteLine(libraryName);
-            foreach (var book in books)
-            {
-                _writer.WriteLine(book.GetName());
-            }
+            foreach (var book in books) _writer.WriteLine(book.GetName());
         }
     }
 }
 
 public class Book
 {
-    private string _name;
+    private readonly string _name;
 
     public Book(string name)
     {
@@ -674,7 +666,7 @@ public class Book
 
 public class LibraryAfter
 {
-    private StreamWriter _writer;
+    private readonly StreamWriter _writer;
 
     public LibraryAfter(StreamWriter writer)
     {
@@ -686,16 +678,13 @@ public class LibraryAfter
         using var reader = streamReader;
         var libraryName = reader.ReadLine();
         _writer.WriteLine(libraryName);
-        foreach (var book in books)
-        {
-            _writer.WriteLine(book.GetName());
-        }
+        foreach (var book in books) _writer.WriteLine(book.GetName());
     }
 }
 
 public class LibraryAdaptParameter
 {
-    private StreamWriter _writer;
+    private readonly StreamWriter _writer;
 
     public LibraryAdaptParameter(StreamWriter writer)
     {
@@ -707,16 +696,13 @@ public class LibraryAdaptParameter
         using var reader = streamReader;
         var libraryName = reader.ReadLine();
         _writer.WriteLine(libraryName);
-        foreach (var book in books)
-        {
-            _writer.WriteLine(book.GetName());
-        }
+        foreach (var book in books) _writer.WriteLine(book.GetName());
     }
 }
 
 public class LibraryAdaptParameter2
 {
-    private StreamWriter _writer;
+    private readonly StreamWriter _writer;
 
     public LibraryAdaptParameter2(StreamWriter writer)
     {
@@ -727,10 +713,7 @@ public class LibraryAdaptParameter2
     {
         var libraryName = libraryData.GetLibraryName();
         _writer.WriteLine(libraryName);
-        foreach (var book in books)
-        {
-            _writer.WriteLine(book.GetName());
-        }
+        foreach (var book in books) _writer.WriteLine(book.GetName());
     }
 }
 
@@ -756,13 +739,13 @@ public class StreamReaderLibraryData : LibraryData
     }
 }
 
-class Reservation
+internal class Reservation
 {
-    private int _duration;
+    private readonly Customer _customer;
     private int _dailyRate;
-    private DateTime _date;
-    private Customer _customer;
-    private List<FeeRider> _fees;
+    private readonly DateTime _date;
+    private int _duration;
+    private readonly List<FeeRider> _fees;
 
     public Reservation(Customer customer, int duration,
         int dailyRate, DateTime date)
@@ -781,7 +764,7 @@ class Reservation
 
     public void ExtendForWeek()
     {
-        int weekRemainder = RentalCalendar.WeekRemainderFor(_date);
+        var weekRemainder = RentalCalendar.WeekRemainderFor(_date);
         const int DAYS_PER_WEEK = 7;
         Extend(weekRemainder);
         _dailyRate = RateCalculator.ComputeWeekly(
@@ -801,11 +784,8 @@ class Reservation
 
     private int GetAdditionalFees()
     {
-        int total = 0;
-        foreach (var fee in _fees)
-        {
-            total += fee.GetAmount();
-        }
+        var total = 0;
+        foreach (var fee in _fees) total += fee.GetAmount();
 
         return total;
     }
@@ -861,8 +841,8 @@ internal class Customer
 
 public class CppClass
 {
-    private string _name;
-    private List<Declaration> _declarations;
+    private readonly List<Declaration> _declarations;
+    private readonly string _name;
 
     public CppClass(string name, List<Declaration> declarations)
     {
@@ -885,7 +865,7 @@ public class CppClass
         return _declarations[index];
     }
 
-    public String GetInterface(string interfaceName, List<int> indices)
+    public string GetInterface(string interfaceName, List<int> indices)
     {
         var result = "class " + interfaceName + " {\n + public:\n";
 
@@ -910,15 +890,15 @@ public class Declaration
 
 public class ClassReader
 {
+    private readonly List<Declaration> _declarations;
     private bool _inPublicSection;
     private CppClass? _parsedClass;
-    private List<Declaration> _declarations;
-    private Reader _reader;
+    private readonly Reader _reader;
 
     public ClassReader(Reader reader)
     {
-        this._reader = reader;
-        _declarations = new();
+        _reader = reader;
+        _declarations = new List<Declaration>();
         _inPublicSection = false;
         _parsedClass = null;
     }
@@ -926,22 +906,20 @@ public class ClassReader
     public void Parse()
     {
         var source = new TokenReader(_reader);
-        Token classToken = source.readToken();
-        Token className = source.readToken();
-        Token lbrace = source.readToken();
+        var classToken = source.readToken();
+        var className = source.readToken();
+        var lbrace = source.readToken();
         matchBody(source);
-        Token rbrace = source.readToken();
-        Token semicolon = source.readToken();
+        var rbrace = source.readToken();
+        var semicolon = source.readToken();
 
         if (classToken.getType() == Token.CLASS
             && className.getType() == Token.IDENT
             && lbrace.getType() == Token.LBRACE
             && rbrace.getType() == Token.RBRACE
             && semicolon.getType() == Token.SEMIC)
-        {
             _parsedClass = new CppClass(className.getText(),
                 _declarations);
-        }
     }
 
     private void matchBody(TokenReader source)
@@ -975,7 +953,7 @@ public class Reader
 {
 }
 
-class TokenReader
+internal class TokenReader
 {
     private readonly Reader _reader;
 
@@ -990,44 +968,49 @@ class TokenReader
     }
 }
 
-public class InMemoryDirectory {
+public class InMemoryDirectory
+{
     private readonly List<Element> _elements;
 
     public InMemoryDirectory()
     {
-        _elements = new();
+        _elements = new List<Element>();
     }
 
-    public void AddElement(Element newElement) {
+    public void AddElement(Element newElement)
+    {
         _elements.Add(newElement);
     }
-    public void GenerateIndex() {
-        Element index = new Element("index");
-        foreach (var element in _elements)
-        {
-            index.AddText(element.GetName() + "\n");
-        }
+
+    public void GenerateIndex()
+    {
+        var index = new Element("index");
+        foreach (var element in _elements) index.AddText(element.GetName() + "\n");
         AddElement(index);
     }
-    public int GetElementCount() {
+
+    public int GetElementCount()
+    {
         return _elements.Count();
     }
-    public Element? GetElement(String name) {
+
+    public Element? GetElement(string name)
+    {
         foreach (var element in _elements)
-        {
-            if (element.GetName().Equals(name)) {
+            if (element.GetName().Equals(name))
                 return element;
-            }
-        }
+
         return null;
     }
 }
 
 public class Element
 {
-    private string _name;
+    private readonly string _name;
     private string _text;
-    public Element(string name) {
+
+    public Element(string name)
+    {
         _name = name;
         _text = "";
     }
@@ -1053,19 +1036,24 @@ public class Invoice
     private OurDate _billingDate;
     private OurDate _openingDate;
     private Originator _originator;
-    
+
     ///...
-    public Money GetValue() {
-        Money total = ItemsSum();
-        if (_billingDate.After(OurDate.YearEnd(_openingDate))) {
+    public Money GetValue()
+    {
+        var total = ItemsSum();
+        if (_billingDate.After(OurDate.YearEnd(_openingDate)))
+        {
             if (_originator.GetState().Equals("FL") ||
-            _originator.GetState().Equals("NY"))
-            total.Add(GetLocalShipping());
+                _originator.GetState().Equals("NY"))
+                total.Add(GetLocalShipping());
             else
-            total.Add(GetDefaultShipping());
+                total.Add(GetDefaultShipping());
         }
         else
+        {
             total.Add(GetSpanningShipping());
+        }
+
         total.Add(GetTax());
         return total;
     }
@@ -1129,8 +1117,9 @@ public class Invoice1
     }
 
     ///...
-    public Money GetValue() {
-        Money total = ItemsSum();
+    public Money GetValue()
+    {
+        var total = ItemsSum();
         total.Add(_shippingPricer.GetPrice());
         total.Add(GetTax());
         return total;
@@ -1150,9 +1139,9 @@ public class Invoice1
 
 public class ShippingPricer
 {
-    private OurDate _billingDate;
-    private OurDate _openingDate;
-    private Originator _originator;
+    private readonly OurDate _billingDate;
+    private readonly OurDate _openingDate;
+    private readonly Originator _originator;
 
     public ShippingPricer(OurDate billingDate, OurDate openingDate, Originator originator)
     {
@@ -1167,9 +1156,7 @@ public class ShippingPricer
         {
             if (_originator.GetState().Equals("FL") ||
                 _originator.GetState().Equals("NY"))
-            {
                 return GetLocalShipping();
-            }
 
             return GetDefaultShipping();
         }
@@ -1190,5 +1177,166 @@ public class ShippingPricer
     private Money GetLocalShipping()
     {
         throw new NotImplementedException();
+    }
+}
+
+public sealed class PersonName
+{
+    private readonly string _name;
+    private readonly string _surname;
+
+    public PersonName(string name, string surname)
+    {
+        _name = name;
+        _surname = surname;
+    }
+
+    public void Fill(PersonNameRepresentation representation)
+    {
+        representation.SetName(_name);
+        representation.SetSurname(_surname);
+    }
+}
+
+public interface PersonNameRepresentation
+{
+    void SetName(string name);
+    void SetSurname(string surname);
+}
+
+public class ListPersonNameRepresentation : PersonNameRepresentation
+{
+    private string _name;
+    private string _surname;
+
+    public void SetName(string name)
+    {
+        _name = name;
+    }
+
+    public void SetSurname(string surname)
+    {
+        _surname = surname;
+    }
+
+    public string Serialize()
+    {
+        return $"{_surname}, {_name}";
+    }
+}
+
+public class FullPersonNameRepresentation : PersonNameRepresentation
+{
+    private string _name;
+    private string _surname;
+
+    public void SetName(string name)
+    {
+        _name = name;
+    }
+
+    public void SetSurname(string surname)
+    {
+        _surname = surname;
+    }
+
+    public string Serialize()
+    {
+        return $"{_name} {_surname}";
+    }
+}
+
+public class DniPersonNameRepresentation : PersonNameRepresentation
+{
+    private string _name;
+    private string _surname;
+
+    public void SetName(string name)
+    {
+        _name = name;
+    }
+
+    public void SetSurname(string surname)
+    {
+        _surname = surname;
+    }
+
+    public string Serialize()
+    {
+        var fullName = string.Format("{1}<<{0}", RemovePunctuation(_name).Trim(), RemovePunctuation(_surname).Trim())
+            .Replace(" ", "<")
+            .ToUpperInvariant();
+        return fullName;
+    }
+
+    private static string RemovePunctuation(string text)
+    {
+        return new string(
+                text.Normalize(NormalizationForm.FormD)
+                    .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                    .ToArray()
+            )
+            .Normalize(NormalizationForm.FormC);
+    }
+}
+
+public class DBPersonNameRepresentation : PersonNameRepresentation
+{
+    private string _name;
+    private string _surname;
+
+    public void SetName(string name)
+    {
+        _name = name;
+    }
+
+    public void SetSurname(string surname)
+    {
+        _surname = surname;
+    }
+
+    public PersonNameDto Dto()
+    {
+        return new PersonNameDto(_name, _surname);
+    }
+}
+
+public class PersonNameDto
+{
+    private readonly string _name;
+    private readonly string _surname;
+
+    public PersonNameDto(string name, string surname)
+    {
+        _name = name;
+        _surname = surname;
+    }
+
+    public string Name()
+    {
+        return _name;
+    }
+
+    public string Surname()
+    {
+        return _surname;
+    }
+
+    protected bool Equals(PersonNameDto other)
+    {
+        return _name == other._name && _surname == other._surname;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((PersonNameDto)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_name, _surname);
     }
 }

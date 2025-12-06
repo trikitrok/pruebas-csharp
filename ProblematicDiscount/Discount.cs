@@ -1,29 +1,19 @@
-namespace ProblematicDiscount
+namespace ProblematicDiscount;
+
+public class Discount
 {
-    public class Discount
+    private readonly MarketingCampaign _marketingCampaign;
+
+    public Discount()
     {
-        private readonly MarketingCampaign _marketingCampaign;
+        _marketingCampaign = new MarketingCampaign();
+    }
 
-        public Discount()
-        {
-            this._marketingCampaign = new MarketingCampaign();
-        }
-
-        public Money DiscountFor(Money netPrice)
-        {
-            if (_marketingCampaign.IsCrazySalesDay())
-            {
-                return netPrice.ReduceBy(15);
-            }
-            if (netPrice.MoreThan(Money.OneThousand))
-            {
-                return netPrice.ReduceBy(10);
-            }
-            if (netPrice.MoreThan(Money.OneHundred) && _marketingCampaign.IsActive())
-            {
-                return netPrice.ReduceBy(5);
-            }
-            return netPrice;
-        }
+    public Money DiscountFor(Money netPrice)
+    {
+        if (_marketingCampaign.IsCrazySalesDay()) return netPrice.ReduceBy(15);
+        if (netPrice.MoreThan(Money.OneThousand)) return netPrice.ReduceBy(10);
+        if (netPrice.MoreThan(Money.OneHundred) && _marketingCampaign.IsActive()) return netPrice.ReduceBy(5);
+        return netPrice;
     }
 }

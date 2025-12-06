@@ -1,18 +1,16 @@
 using NUnit.Framework;
 
-namespace Portfolio.Test
+namespace Portfolio.Test;
+
+public class PortfolioTest
 {
-    public class PortfolioTest
+    [Test]
+    public void fix_me()
     {
-        [Test]
-        public void fix_me()
-        {
-            var app = new Portfolio("../../../portfolio.csv");
+        var app = new Portfolio("../../../portfolio.csv");
 
-            app.ComputePortfolioValue();
+        app.ComputePortfolioValue();
 
-            Assert.That("fixme", Is.EqualTo("fixme"));
-        }
-
+        Assert.That("fixme", Is.EqualTo("fixme"));
     }
 }
